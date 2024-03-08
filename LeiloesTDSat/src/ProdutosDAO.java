@@ -15,9 +15,27 @@ public class ProdutosDAO {
     ResultSet resultset;
     ArrayList<ProdutosDTO> listagem = new ArrayList<>();
 
-    public void cadastrarProduto(ProdutosDTO produto) {
+    public static void cadastrar(ProdutosDTO p) {
+        conectaDAO conexao = new conectaDAO();
 
-        //conn = new conectaDAO().connectDB();
+        try {
+            conexao.conectar();
+
+            String sql = "INSERT INTO produtos (nome, valor, status) VALUES (?, ?, ?)";
+            PreparedStatement consulta = conexao.getConexao().prepareStatement(sql);
+            consulta.setString(1, p.getNome());
+            consulta.setInt(2, p.getValor());
+            consulta.setString(3, "A Venda");
+
+            consulta.executeUpdate();
+
+        } catch (SQLException e) {
+            System.out.println("Erro ao cadastrar produto no banco de dados");
+            e.printStackTrace();
+
+        } finally {
+            conexao.desconectar();
+        }
     }
 
     public static List<ProdutosDTO> listarTodos() {
@@ -40,7 +58,7 @@ public class ProdutosDAO {
                 p.setNome(resposta.getString("nome"));
                 p.setValor(resposta.getInt("valor"));
                 p.setStatus(resposta.getString("Status"));
-                
+
                 lista.add(p);
             }
 
