@@ -1,5 +1,7 @@
 
 import java.util.ArrayList;
+import java.util.List;
+import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
 /*
@@ -18,7 +20,6 @@ public class listagemVIEW extends javax.swing.JFrame {
      */
     public listagemVIEW() {
         initComponents();
-        listarProdutos();
     }
 
     /**
@@ -43,17 +44,7 @@ public class listagemVIEW extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        listaProdutos.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
-            },
-            new String [] {
-                "ID", "Nome", "Valor", "Status"
-            }
-        ));
+        listaProdutos.setModel(montarTabela(ProdutosDAO.listarTodos()));
         jScrollPane1.setViewportView(listaProdutos);
 
         jLabel1.setFont(new java.awt.Font("Lucida Fax", 0, 18)); // NOI18N
@@ -141,7 +132,7 @@ public class listagemVIEW extends javax.swing.JFrame {
         ProdutosDAO produtosdao = new ProdutosDAO();
         
         //produtosdao.venderProduto(Integer.parseInt(id));
-        listarProdutos();
+
     }//GEN-LAST:event_btnVenderActionPerformed
 
     private void btnVendasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVendasActionPerformed
@@ -187,6 +178,36 @@ public class listagemVIEW extends javax.swing.JFrame {
             }
         });
     }
+    
+    private DefaultTableModel montarTabela(List<ProdutosDTO> lista) {
+        String[] colunas = {"ID", "Nome", "Valor", "Status"};
+
+        DefaultTableModel tabela = new DefaultTableModel(colunas, 0);
+
+        for (int i = 0; i < lista.size(); i++) {
+            ProdutosDTO p = lista.get(i);
+            String[] linha = {
+                Integer.toString(p.getId()),
+                p.getNome(),
+                Integer.toString(p.getValor()),
+                p.getStatus()
+            };
+
+            tabela.addRow(linha);
+        }
+
+        return tabela;
+    }
+
+    private int getPosicao() {
+        int posicao = listaProdutos.getSelectedRow();
+        if (posicao <= -1) {
+            JOptionPane.showMessageDialog(null, "Selecione um Produto!");
+            return -1; 
+        }
+
+        return Integer.parseInt((String) listaProdutos.getValueAt(posicao, 0));
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnVendas;
@@ -201,25 +222,5 @@ public class listagemVIEW extends javax.swing.JFrame {
     private javax.swing.JTable listaProdutos;
     // End of variables declaration//GEN-END:variables
 
-    private void listarProdutos(){
-        try {
-            ProdutosDAO produtosdao = new ProdutosDAO();
-            
-            DefaultTableModel model = (DefaultTableModel) listaProdutos.getModel();
-            model.setNumRows(0);
-            
-            ArrayList<ProdutosDTO> listagem = produtosdao.listarProdutos();
-            
-            for(int i = 0; i < listagem.size(); i++){
-                model.addRow(new Object[]{
-                    listagem.get(i).getId(),
-                    listagem.get(i).getNome(),
-                    listagem.get(i).getValor(),
-                    listagem.get(i).getStatus()
-                });
-            }
-        } catch (Exception e) {
-        }
-    
-    }
+   
 }
