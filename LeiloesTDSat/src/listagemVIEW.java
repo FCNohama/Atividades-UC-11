@@ -128,8 +128,19 @@ public class listagemVIEW extends javax.swing.JFrame {
 
     private void btnVenderActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVenderActionPerformed
         ProdutosDAO ProdutosDAO = new ProdutosDAO();
-        ProdutosDAO.Vender(id_produto_venda);
-        listaProdutos.setModel(montarTabela(ProdutosDAO.listarTodos()));
+        
+        try {
+            if (id_produto_venda.getText().isEmpty()) {
+            throw new IllegalArgumentException("Por favor, preencha todos os campos.");
+            } else {
+                ProdutosDAO.Vender(id_produto_venda);
+                listaProdutos.setModel(montarTabela(ProdutosDAO.listarTodos()));
+            }
+            
+        } catch (IllegalArgumentException e) {
+        System.err.println("Erro: " + e.getMessage());
+        JOptionPane.showMessageDialog(null, "Erro ao vender produto! Por favor, digite um ID valido");
+    }
         
         //produtosdao.venderProduto(Integer.parseInt(id));
 
