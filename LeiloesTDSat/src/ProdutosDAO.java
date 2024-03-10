@@ -7,6 +7,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.JTextPane;
 
 public class ProdutosDAO {
 
@@ -71,4 +72,30 @@ public class ProdutosDAO {
         }
         return lista;
     }
+    
+    public static boolean Vender(JTextPane id_produto_venda) {
+        conectaDAO conexao = new conectaDAO();
+
+        try {
+            conexao.conectar();
+
+            String sql = "UPDATE produtos SET status = 'Vendido' WHERE id LIKE ?";
+            PreparedStatement consulta = conexao.getConexao().prepareStatement(sql);
+
+            consulta.setString(1, id_produto_venda.getText());
+
+            consulta.execute();
+            return true;
+
+        } catch (SQLException e) {
+            System.out.println("Erro ao vender Produto ");
+            e.printStackTrace();
+            return false;
+
+        } finally {
+            conexao.desconectar();
+        }
+    }
+    
+    
 }
