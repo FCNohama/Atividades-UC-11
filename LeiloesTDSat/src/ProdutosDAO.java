@@ -72,7 +72,7 @@ public class ProdutosDAO {
         }
         return lista;
     }
-    
+
     public static boolean Vender(JTextPane id_produto_venda) {
         conectaDAO conexao = new conectaDAO();
 
@@ -96,6 +96,39 @@ public class ProdutosDAO {
             conexao.desconectar();
         }
     }
-    
-    
+
+    public static List<ProdutosDTO> filtrarVendidos() {
+        conectaDAO conexao = new conectaDAO();
+
+        List<ProdutosDTO> lista = new ArrayList<ProdutosDTO>();
+
+        try {
+            conexao.conectar();
+
+            String sql = "SELECT * FROM produtos WHERE status LIKE ?";
+            PreparedStatement consulta = conexao.getConexao().prepareStatement(sql);
+            consulta.setString(1, "Vendido");
+
+            ResultSet resposta = consulta.executeQuery();
+
+            while (resposta.next()) {
+                ProdutosDTO p = new ProdutosDTO();
+
+                p.setId(resposta.getInt("id"));
+                p.setNome(resposta.getString("nome"));
+                p.setValor(resposta.getInt("valor"));
+                p.setStatus(resposta.getString("Status"));
+
+                lista.add(p);
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Erro ao listar registros do banco de dados");
+            e.printStackTrace();
+
+        } finally {
+            conexao.desconectar();
+        }
+        return lista;
+    }
 }
